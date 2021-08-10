@@ -2,8 +2,6 @@ package com.testprojevosoft.viewModels
 
 import androidx.lifecycle.ViewModel
 import com.testprojevosoft.Repository
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.runBlocking
 
 class PhoneNumberFragmentViewModel: ViewModel() {
 
@@ -14,9 +12,7 @@ class PhoneNumberFragmentViewModel: ViewModel() {
         return numbers.firstOrNull { it == number } != null
     }
 
-    fun requestVerificationCode() {
-
-        Repository.requestVerificationCode()
+    suspend fun requestVerificationCode() {
+        mRepository.requestVerificationCode()
     }
-
 }

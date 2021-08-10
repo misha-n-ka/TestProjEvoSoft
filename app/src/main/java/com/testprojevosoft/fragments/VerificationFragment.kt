@@ -18,6 +18,9 @@ import com.testprojevosoft.activities.AuthorizationActivity
 import com.testprojevosoft.anim.ShakeError
 import com.testprojevosoft.databinding.FragmentVerificationBinding
 import com.testprojevosoft.viewModels.VerificationViewModel
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 
 class VerificationFragment : Fragment() {
 
@@ -46,7 +49,7 @@ class VerificationFragment : Fragment() {
                 mBinding.tvTimer.text = getString(R.string.timerText, remainingSeconds.toString())
             })
 
-        mVerificationViewModel.isTimerRunning.observe(viewLifecycleOwner,
+        mVerificationViewModel.isTimerElapsed.observe(viewLifecycleOwner,
             Observer { isTimerElapsed ->
                 if(isTimerElapsed) {
                     mBinding.btnRetry.setTextColor(R.attr.colorPrimary)
@@ -55,7 +58,9 @@ class VerificationFragment : Fragment() {
             })
 
         mBinding.btnRetry.setOnClickListener {
-            mVerificationViewModel.retryVerificationCode()
+            GlobalScope.launch(Dispatchers.IO) {
+                mVerificationViewModel.retryVerificationCode()
+            }
             mVerificationViewModel.startTimer(60, 1f)
         }
 
@@ -134,7 +139,7 @@ class VerificationFragment : Fragment() {
                                 "${mBinding.etInputCode3.text}${mBinding.etInputCode4.text}"
 
                     if (isCodeValid(inputCode)) {
-                        (activity as Navigator).goToPicturesList()
+//                        (activity as Navigator).goToPicturesList()
 
                     } else {
                         startShakeError(mBinding)

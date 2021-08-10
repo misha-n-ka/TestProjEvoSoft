@@ -2,28 +2,22 @@ package com.testprojevosoft
 
 import android.content.Context
 import com.testprojevosoft.data.Database
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.runBlocking
 
 class Repository {
     fun getPhoneNumbers(): List<String> {
-        runBlocking {
-            delay(2000L)
-        }
         return Database.phoneNumbers
     }
 
-    fun getSmsCodes(): List<String> {
-        runBlocking {
-            delay(2000L)
-        }
+    suspend fun getSmsCodes(): List<String> {
+        delay(2000L)
         return Database.smsCodes
     }
 
-    fun requestVerificationCode() {
-        runBlocking {
-            delay(2000L)
-        }
+    suspend fun requestVerificationCode() {
+        delay(2000L)
     }
 
     companion object {
