@@ -43,6 +43,10 @@ class AuthorizationActivity : AppCompatActivity(), Navigator {
             .commit()
     }
 
+    override fun goToPictureList() {
+        val intent = Intent()
+    }
+
     companion object {
         const val PHONE_NUMBER_KEY = "phoneNumber"
     }

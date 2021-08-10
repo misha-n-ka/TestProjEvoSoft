@@ -18,9 +18,10 @@ import com.testprojevosoft.activities.AuthorizationActivity
 import com.testprojevosoft.anim.ShakeError
 import com.testprojevosoft.databinding.FragmentVerificationBinding
 import com.testprojevosoft.viewModels.VerificationViewModel
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.*
+
+
+private const val TAG = "Verification"
 
 class VerificationFragment : Fragment() {
 
@@ -51,7 +52,7 @@ class VerificationFragment : Fragment() {
 
         mVerificationViewModel.isTimerElapsed.observe(viewLifecycleOwner,
             Observer { isTimerElapsed ->
-                if(isTimerElapsed) {
+                if (isTimerElapsed) {
                     mBinding.btnRetry.setTextColor(R.attr.colorPrimary)
                     mBinding.btnRetry.isEnabled = true
                 }
@@ -138,11 +139,18 @@ class VerificationFragment : Fragment() {
                         "${mBinding.etInputCode1.text}${mBinding.etInputCode2.text}" +
                                 "${mBinding.etInputCode3.text}${mBinding.etInputCode4.text}"
 
-                    if (isCodeValid(inputCode)) {
-//                        (activity as Navigator).goToPicturesList()
+                    GlobalScope.launch(Dispatchers.IO) {
+                        val isValid =
+                            withContext(Dispatchers.IO) {
+                                mVerificationViewModel.isValidCode(inputCode)
+                            }
+                        if (isValid) {
+                            (activity as Navigator).goToPicturesList()
+                        } else {
+                            mBinding.etInputCode1.requestFocus()
+                            startShakeError(mBinding)
+                        }
 
-                    } else {
-                        startShakeError(mBinding)
                     }
                 }
             }
@@ -153,22 +161,23 @@ class VerificationFragment : Fragment() {
         })
     }
 
-    private fun isCodeValid(code: String): Boolean {
-        return mVerificationViewModel.isCodeValid(code)
+    override fun onDestroy() {
+        super.onDestroy()
+        mVerificationViewModel.cancelTimer()
     }
 
-    private fun startShakeError(mBinding: FragmentVerificationBinding) {
-        val context = activity as Context
+    private fun startShakeError(binding: FragmentVerificationBinding) {
+        val context = activity?.applicationContext as Context
 
         //reset text of all code placeholders
-        mBinding.apply {
-            etInputCode1.text = null
-            etInputCode2.text = null
-            etInputCode3.text = null
-            etInputCode4.text = null
+        binding.apply {
+            etInputCode1.text.clear()
+            etInputCode2.text.clear()
+            etInputCode3.text.clear()
+            etInputCode4.text.clear()
         }
         // change color of code placeholders
-        mBinding.apply {
+        binding.apply {
             etInputCode1.backgroundTintList =
                 ColorStateList.valueOf(ContextCompat.getColor(context, R.color.red_error))
             etInputCode2.backgroundTintList =
@@ -180,19 +189,11 @@ class VerificationFragment : Fragment() {
         }
 
         //starting the error animation
-        mBinding.apply {
+        binding.apply {
             etInputCode1.startAnimation(ShakeError.shakeError())
             etInputCode2.startAnimation(ShakeError.shakeError())
             etInputCode3.startAnimation(ShakeError.shakeError())
             etInputCode4.startAnimation(ShakeError.shakeError())
-        }
-
-        //change EditText background color to default
-        mBinding.apply {
-            etInputCode1.backgroundTintList = null
-            etInputCode2.backgroundTintList = null
-            etInputCode3.backgroundTintList = null
-            etInputCode4.backgroundTintList = null
         }
     }
 

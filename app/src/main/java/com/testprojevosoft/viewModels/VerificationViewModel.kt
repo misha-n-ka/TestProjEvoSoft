@@ -1,16 +1,18 @@
 package com.testprojevosoft.viewModels
 
 import android.os.CountDownTimer
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.testprojevosoft.Repository
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 
-class VerificationViewModel: ViewModel() {
+class VerificationViewModel : ViewModel() {
 
     private val mRepository = Repository.get()
     private lateinit var timer: CountDownTimer
@@ -24,14 +26,9 @@ class VerificationViewModel: ViewModel() {
         get() = _isTimerElapsed
 
 
-    fun isCodeValid(code: String): Boolean {
-        var codes: List<String> = emptyList()
-
-        viewModelScope.launch {
-            val job = async { mRepository.getSmsCodes()}
-            codes = job.await()
-        }
-        return codes.firstOrNull{it == code} != null
+    suspend fun isValidCode(code: String): Boolean {
+        val codes = mRepository.getSmsCodes()
+        return codes.firstOrNull { it == code } != null
     }
 
     suspend fun retryVerificationCode() {
@@ -39,7 +36,7 @@ class VerificationViewModel: ViewModel() {
 
     }
 
-    fun startTimer (secondsTimer: Int, secondsInterval: Float) {
+    fun startTimer(secondsTimer: Int, secondsInterval: Float) {
         val millisIntFuture = (secondsTimer * 1000).toLong()
         val countDownInterval = (secondsInterval * 1000).toLong()
         _isTimerElapsed.value = false

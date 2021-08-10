@@ -38,6 +38,9 @@ class PhoneNumberInputFragment : Fragment(R.layout.fragment_enter_phone_number) 
     override fun onStart() {
         super.onStart()
 
+        if (mBinding.etPhoneNumber.text.isNullOrEmpty()) {
+            mBinding.btnGetSmsCode.isEnabled = false
+        }
         updateButtonColor(isButtonEnabled)
         resetUI()
 
@@ -47,6 +50,7 @@ class PhoneNumberInputFragment : Fragment(R.layout.fragment_enter_phone_number) 
             }
 
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                mBinding.btnGetSmsCode.isEnabled = !s.isNullOrEmpty()
                 val validPhoneNumber: String? =
                     Regex("^[+]?[0-9]{10}$").find(s.toString().trim())?.value
                 if (validPhoneNumber == null) {

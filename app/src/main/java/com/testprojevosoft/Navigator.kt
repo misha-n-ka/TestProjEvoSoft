@@ -6,4 +6,6 @@ interface Navigator {
 
     fun goToSmsVerification(phoneNumber: String)
 
+    fun goToPicturesList()
+
 }
