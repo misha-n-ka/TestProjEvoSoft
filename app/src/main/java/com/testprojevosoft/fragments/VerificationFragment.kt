@@ -11,6 +11,7 @@ import android.view.ViewGroup
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.Observer
 import com.testprojevosoft.Navigator
 import com.testprojevosoft.R
 import com.testprojevosoft.activities.AuthorizationActivity
@@ -18,7 +19,7 @@ import com.testprojevosoft.anim.ShakeError
 import com.testprojevosoft.databinding.FragmentVerificationBinding
 import com.testprojevosoft.viewModels.VerificationViewModel
 
-class VerificationFragment: Fragment() {
+class VerificationFragment : Fragment() {
 
     private lateinit var mBinding: FragmentVerificationBinding
     private lateinit var mPhoneNumber: String
@@ -40,8 +41,25 @@ class VerificationFragment: Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        mVerificationViewModel.remainingSecondsLiveData.observe(viewLifecycleOwner,
+            Observer { remainingSeconds ->
+                mBinding.tvTimer.text = getString(R.string.timerText, remainingSeconds.toString())
+            })
 
-        mVerificationViewModel.startTimer()
+        mVerificationViewModel.isTimerRunning.observe(viewLifecycleOwner,
+            Observer { isTimerElapsed ->
+                if(isTimerElapsed) {
+                    mBinding.btnRetry.setTextColor(R.attr.colorPrimary)
+                    mBinding.btnRetry.isEnabled = true
+                }
+            })
+
+        mBinding.btnRetry.setOnClickListener {
+            mVerificationViewModel.retryVerificationCode()
+            mVerificationViewModel.startTimer(60, 1f)
+        }
+
+        mVerificationViewModel.startTimer(60, 1f)
         val formattedPhoneNumber = formatPhoneNumber(mPhoneNumber)
         mBinding.tvPhoneNumber.text = formattedPhoneNumber
         setupCodeInputs()
@@ -59,7 +77,7 @@ class VerificationFragment: Fragment() {
     }
 
     private fun setupCodeInputs() {
-        mBinding.etInputCode1.addTextChangedListener(object: TextWatcher {
+        mBinding.etInputCode1.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
 
             }
@@ -74,7 +92,7 @@ class VerificationFragment: Fragment() {
 
             }
         })
-        mBinding.etInputCode2.addTextChangedListener(object: TextWatcher {
+        mBinding.etInputCode2.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
 
             }
@@ -89,7 +107,7 @@ class VerificationFragment: Fragment() {
 
             }
         })
-        mBinding.etInputCode3.addTextChangedListener(object: TextWatcher {
+        mBinding.etInputCode3.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
 
             }
@@ -104,7 +122,7 @@ class VerificationFragment: Fragment() {
 
             }
         })
-        mBinding.etInputCode4.addTextChangedListener(object: TextWatcher {
+        mBinding.etInputCode4.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
 
             }

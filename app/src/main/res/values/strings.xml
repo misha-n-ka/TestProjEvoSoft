@@ -11,4 +11,5 @@
     <string name="button_retry">Retry</string>
     <string name="button_verify">Verify</string>
     <string name="countyCode">+7</string>
+    <string name="timerText">%1$s seconds left</string>
 </resources>

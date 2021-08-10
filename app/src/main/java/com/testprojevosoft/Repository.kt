@@ -20,6 +20,12 @@ class Repository {
         return Database.smsCodes
     }
 
+    fun requestVerificationCode() {
+        runBlocking {
+            delay(2000L)
+        }
+    }
+
     companion object {
         private var INSTANCE: Repository? = null
 
@@ -32,12 +38,5 @@ class Repository {
         fun get(): Repository {
             return INSTANCE ?: throw IllegalStateException("Repository must be initialized")
         }
-
-        fun requestVerificationCode() {
-            runBlocking {
-                delay(2000L)
-            }
-        }
-
     }
 }
