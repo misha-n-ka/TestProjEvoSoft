@@ -43,8 +43,9 @@ class AuthorizationActivity : AppCompatActivity(), Navigator {
             .commit()
     }
 
-    override fun goToPictureList() {
-        val intent = Intent()
+    override fun goToPicturesList() {
+        val intent = Intent(this, ImagesListActivity::class.java)
+        startActivity(intent)
     }
 
     companion object {

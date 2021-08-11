@@ -2,9 +2,8 @@ package com.testprojevosoft
 
 import android.content.Context
 import com.testprojevosoft.data.Database
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.*
+import kotlin.coroutines.coroutineContext
 
 class Repository {
     fun getPhoneNumbers(): List<String> {
@@ -17,7 +16,11 @@ class Repository {
     }
 
     suspend fun requestVerificationCode() {
-        delay(2000L)
+        return Database.requestVerificationCode()
+    }
+
+    suspend fun getNextImages(numLoadImages: Int) : List<String> {
+        return Database.getNextImages(numLoadImages)
     }
 
     companion object {

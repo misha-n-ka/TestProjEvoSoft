@@ -16,6 +16,7 @@ import com.testprojevosoft.R
 import com.testprojevosoft.databinding.FragmentEnterPhoneNumberBinding
 import com.testprojevosoft.viewModels.PhoneNumberFragmentViewModel
 import kotlinx.coroutines.*
+import kotlin.coroutines.coroutineContext
 
 private const val TAG = "NumberInputFragment"
 
@@ -79,7 +80,7 @@ class PhoneNumberInputFragment : Fragment(R.layout.fragment_enter_phone_number) 
                 mBinding.progressBar.visibility = View.VISIBLE
             }
             if (mPhoneNumberViewModel.isNumberInBase(mPhoneNumber)) {
-                GlobalScope.launch(Dispatchers.IO) {
+                GlobalScope.launch(Dispatchers.Main) {
                     mPhoneNumberViewModel.requestVerificationCode()
                     (activity as Navigator).goToSmsVerification(mPhoneNumber)
                 }
