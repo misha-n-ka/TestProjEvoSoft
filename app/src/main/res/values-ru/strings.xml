@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Тест-проект EvoSoft</string>
+    <string name="authorization">Авторизация</string>
+    <string name="phone_number">Номер телефона</string>
+    <string name="sms_code">СМС-код</string>
+    <string name="input_phone_number_description">Вы получите смс-код на этот номер телефона</string>
+    <string name="btn_get_sms_code">Запросить смс-код</string>
+    <string name="verification_title">Верификация по смс-коду</string>
+    <string name="verification_description">Введите полученный смс-код</string>
+    <string name="if_did_not_receive_code">Если вы не получили смс-код нажмите</string>
+    <string name="button_retry">Повтор</string>
+    <string name="button_verify">Подтвердить</string>
+    <string name="countyCode">+7</string>
+    <string name="timerText">%1$s секунд осталось</string>
+    <string name="no_number_in_base">Такого номера нет. Введите 9998887766</string>
+    <string name="delete_image">Удалить</string>
+    <string name="logout">Выйти</string>
+</resources>
