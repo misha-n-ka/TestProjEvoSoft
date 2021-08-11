@@ -1,15 +1,14 @@
 package com.testprojevosoft.activities
 
+import android.app.Activity
+import android.content.Intent
 import android.os.Bundle
-import android.util.Log
+import androidx.activity.result.ActivityResult
+import androidx.activity.result.ActivityResultLauncher
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
-import androidx.lifecycle.Observer
-import androidx.recyclerview.widget.DividerItemDecoration
-import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.testprojevosoft.data.Database
-import com.testprojevosoft.databinding.ActivityMainBinding
 import com.testprojevosoft.databinding.ActivityPicturesListBinding
 import com.testprojevosoft.utils.ImageAdapter
 import com.testprojevosoft.utils.InfiniteScrollListener
@@ -19,11 +18,14 @@ import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 
-class ImagesListActivity : AppCompatActivity(), InfiniteScrollListener.OnLoadMoreListener {
+class ImagesListActivity : AppCompatActivity(),
+    InfiniteScrollListener.OnLoadMoreListener,
+    ImageAdapter.OpenImageNavigator {
 
     private lateinit var mBinding: ActivityPicturesListBinding
     private lateinit var mInfiniteScrollListener: InfiniteScrollListener
     private lateinit var imageAdapter: ImageAdapter
+    private lateinit var openImageActivityLauncher: ActivityResultLauncher<Intent>
 
     private var images: MutableList<String?> = mutableListOf()
     private val imageListViewModel: ImageListViewModel by viewModels()
@@ -44,6 +46,14 @@ class ImagesListActivity : AppCompatActivity(), InfiniteScrollListener.OnLoadMor
             imageAdapter = ImageAdapter(images)
             adapter = imageAdapter
         }
+
+        openImageActivityLauncher =
+            registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+                if (result.resultCode == Activity.RESULT_OK) {
+                    deleteImage(result.data?.getStringExtra(EXTRA_DELETE_IMAGE)!!)
+                }
+            }
+
     }
 
     override fun onStart() {
@@ -58,5 +68,22 @@ class ImagesListActivity : AppCompatActivity(), InfiniteScrollListener.OnLoadMor
             imageAdapter.addImages(newImages.await())
             mInfiniteScrollListener.setLoaded()
         }
+    }
+
+    override fun deleteImage(image: String) {
+        imageAdapter.deleteImage(image)
+    }
+
+    override fun goToOpenImage(imageUrl: String?) {
+
+        val intent = Intent(applicationContext, OpenImageActivity::class.java).apply {
+            putExtra(EXTRA_OPEN_IMAGE, imageUrl)
+        }
+        openImageActivityLauncher.launch(intent)
+    }
+
+    companion object {
+        const val EXTRA_OPEN_IMAGE = "extraOpenImage"
+        const val EXTRA_DELETE_IMAGE = "extraDeleteImage"
     }
 }

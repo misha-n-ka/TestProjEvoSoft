@@ -13,6 +13,7 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.TestProjEvoSoft">
         <activity android:name=".activities.AuthorizationActivity"/>
+        <activity android:name=".activities.OpenImageActivity"/>
         <activity
             android:name=".activities.ImagesListActivity"
             android:exported="true">

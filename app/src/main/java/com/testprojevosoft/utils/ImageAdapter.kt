@@ -1,7 +1,6 @@
 package com.testprojevosoft.utils
 
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
@@ -14,6 +13,11 @@ private  const val VIEW_TYPE_PROGRESS = 2
 
 class ImageAdapter(private var images: MutableList<String?>) :
     RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+
+    interface OpenImageNavigator {
+        fun goToOpenImage(imageUrl: String?)
+        fun deleteImage(image: String)
+    }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         val inflater = LayoutInflater.from(parent.context)
@@ -48,6 +52,13 @@ class ImageAdapter(private var images: MutableList<String?>) :
     inner class ImageViewHolder(private val binding: ImageItemBinding) :
         RecyclerView.ViewHolder(binding.root) {
 
+        init {
+            itemView.setOnClickListener {
+                (itemView.context as OpenImageNavigator)
+                    .goToOpenImage(images[absoluteAdapterPosition])
+            }
+        }
+
         fun bindImage(position: Int) {
             Glide.with(binding.image.context)
                 .load(images[position])
@@ -79,5 +90,6 @@ class ImageAdapter(private var images: MutableList<String?>) :
 
     fun deleteImage(image: String) {
         images.remove(image)
+        notifyDataSetChanged()
     }
 }
