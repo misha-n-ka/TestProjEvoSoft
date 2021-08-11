@@ -12,10 +12,10 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.TestProjEvoSoft">
-        <activity android:name=".activities.AuthorizationActivity"/>
+        <activity android:name=".activities.ImagesListActivity"/>
         <activity android:name=".activities.OpenImageActivity"/>
         <activity
-            android:name=".activities.ImagesListActivity"
+            android:name=".activities.AuthorizationActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

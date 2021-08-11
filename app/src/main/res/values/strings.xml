@@ -14,4 +14,5 @@
     <string name="timerText">%1$s seconds left</string>
     <string name="no_number_in_base">There is no number in database</string>
     <string name="delete_image">Delete image</string>
+    <string name="logout">Logout</string>
 </resources>

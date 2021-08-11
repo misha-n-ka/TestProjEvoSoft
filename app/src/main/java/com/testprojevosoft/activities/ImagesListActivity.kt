@@ -3,12 +3,15 @@ package com.testprojevosoft.activities
 import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
+import android.view.Menu
+import android.view.MenuItem
 import androidx.activity.result.ActivityResult
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.testprojevosoft.R
 import com.testprojevosoft.databinding.ActivityPicturesListBinding
 import com.testprojevosoft.utils.ImageAdapter
 import com.testprojevosoft.utils.InfiniteScrollListener
@@ -61,6 +64,21 @@ class ImagesListActivity : AppCompatActivity(),
         onLoadMore(10)
     }
 
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        menuInflater.inflate(R.menu.activity_pictures_list, menu)
+        return true
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        return when(item.itemId) {
+            R.id.logOut -> {
+                startActivity(Intent(applicationContext, AuthorizationActivity::class.java))
+                finish()
+                true
+            } else -> false
+        }
+    }
+
     override fun onLoadMore(numLoadItems: Int) {
         GlobalScope.launch(Dispatchers.Main) {
             imageAdapter.addNullData()
@@ -75,7 +93,6 @@ class ImagesListActivity : AppCompatActivity(),
     }
 
     override fun goToOpenImage(imageUrl: String?) {
-
         val intent = Intent(applicationContext, OpenImageActivity::class.java).apply {
             putExtra(EXTRA_OPEN_IMAGE, imageUrl)
         }

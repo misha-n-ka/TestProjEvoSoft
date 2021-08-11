@@ -12,6 +12,7 @@ import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
+import com.testprojevosoft.Authorizable
 import com.testprojevosoft.Navigator
 import com.testprojevosoft.R
 import com.testprojevosoft.activities.AuthorizationActivity
@@ -145,7 +146,9 @@ class VerificationFragment : Fragment() {
                                 mVerificationViewModel.isValidCode(inputCode)
                             }
                         if (isValid) {
+                            (activity as Authorizable).login(true)
                             (activity as Navigator).goToPicturesList()
+                            requireActivity().finish()
                         } else {
                             mBinding.etInputCode1.requestFocus()
                             startShakeError(mBinding)
