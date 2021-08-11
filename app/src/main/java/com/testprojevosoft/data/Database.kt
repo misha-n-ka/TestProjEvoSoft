@@ -55,7 +55,7 @@ class Database {
         }
 
         suspend fun getNextImages(numLoadItems: Int): List<String> {
-            delay(1000L)
+            delay(2000L)
             val minRange = numLoadItems * requestCount
             requestCount++
             var maxRange = numLoadItems * requestCount
