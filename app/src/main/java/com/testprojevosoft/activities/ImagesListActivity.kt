@@ -5,7 +5,6 @@ import android.content.Intent
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
-import androidx.activity.result.ActivityResult
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
@@ -39,10 +38,14 @@ class ImagesListActivity : AppCompatActivity(),
         mBinding = ActivityPicturesListBinding.inflate(layoutInflater)
             .also { setContentView(it.root) }
 
+        // init layout manager
         val manager = LinearLayoutManager(this)
+        // init infinite scroll listener
         mInfiniteScrollListener = InfiniteScrollListener(10, manager, this)
+        // reset infinite scroll listener
         mInfiniteScrollListener.setLoaded()
 
+        // init recyclerview
         mBinding.imagesRecyclerView.apply {
             layoutManager = manager
             addOnScrollListener(mInfiniteScrollListener)
@@ -50,6 +53,7 @@ class ImagesListActivity : AppCompatActivity(),
             adapter = imageAdapter
         }
 
+        // init contract for deleting image result
         openImageActivityLauncher =
             registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
                 if (result.resultCode == Activity.RESULT_OK) {
@@ -65,25 +69,33 @@ class ImagesListActivity : AppCompatActivity(),
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        //inflate toolbar menu
         menuInflater.inflate(R.menu.activity_pictures_list, menu)
         return true
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        return when(item.itemId) {
+        return when (item.itemId) {
+            // if clicked on logout menu button
             R.id.logOut -> {
-                startActivity(Intent(applicationContext, AuthorizationActivity::class.java))
+                startActivity(Intent(applicationContext, AuthorizationMainActivity::class.java))
                 finish()
                 true
-            } else -> false
+            }
+            else -> false
         }
     }
 
     override fun onLoadMore(numLoadItems: Int) {
+        // launch coroutine for loading new images in pictures list
         GlobalScope.launch(Dispatchers.Main) {
+            // set null data for starting loading
             imageAdapter.addNullData()
+            //launch async coroutine
             val newImages = async { imageListViewModel.getNextImages(numLoadItems) }
+            //awaiting result from launched coroutine and setting new images to list
             imageAdapter.addImages(newImages.await())
+            //reset infinite scroll listener
             mInfiniteScrollListener.setLoaded()
         }
     }
@@ -93,9 +105,11 @@ class ImagesListActivity : AppCompatActivity(),
     }
 
     override fun goToOpenImage(imageUrl: String?) {
+        // intent with image url for OpenImageActivity
         val intent = Intent(applicationContext, OpenImageActivity::class.java).apply {
             putExtra(EXTRA_OPEN_IMAGE, imageUrl)
         }
+        // launching activity for result
         openImageActivityLauncher.launch(intent)
     }
 

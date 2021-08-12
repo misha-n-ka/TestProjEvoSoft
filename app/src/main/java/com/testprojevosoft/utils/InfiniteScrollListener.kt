@@ -25,17 +25,20 @@ class InfiniteScrollListener(private val numLoadItems: Int,
         }
         val totalItemCount = layoutManager.itemCount
         val lastVisibleItem = layoutManager.findLastVisibleItemPosition()
+
         if (!isLoading
             && totalItemCount <= lastVisibleItem + VISIBLE_THRESHOLD
             && totalItemCount != 0
             && !END_OF_FEED_ADDED
             && !pauseListening
         ) {
+            // start loading new numLoadItems images
             listener.onLoadMore(numLoadItems)
             isLoading = true
         }
     }
 
+    //reset infinite scroll listener
     fun setLoaded() {
         isLoading = false
     }

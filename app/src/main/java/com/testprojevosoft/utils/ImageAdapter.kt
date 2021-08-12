@@ -49,6 +49,7 @@ class ImageAdapter(private var images: MutableList<String?>) :
         }
     }
 
+    // holder for image
     inner class ImageViewHolder(private val binding: ImageItemBinding) :
         RecyclerView.ViewHolder(binding.root) {
 
@@ -68,26 +69,31 @@ class ImageAdapter(private var images: MutableList<String?>) :
         }
     }
 
+    // holder for progress bar
     inner class ProgressViewHolder(binding: ProgressBarItemBinding) :
         RecyclerView.ViewHolder(binding.root) {
     }
 
+    // add null data to start progress bar
     fun addNullData() {
         images.add(null)
         notifyItemInserted(images.size - 1)
     }
 
+    // remove null data to hide progress bar
     private fun removeNull() {
         images.removeAt(images.size - 1)
         notifyItemRemoved(images.size)
     }
 
+    // add new images to adapter
     fun addImages(newImages: List<String>) {
         removeNull()
         images.addAll(newImages)
         notifyDataSetChanged()
     }
 
+    // delete image from adapter
     fun deleteImage(image: String) {
         images.remove(image)
         notifyDataSetChanged()

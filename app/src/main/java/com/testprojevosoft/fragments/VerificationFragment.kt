@@ -15,7 +15,7 @@ import androidx.lifecycle.Observer
 import com.testprojevosoft.Authorizable
 import com.testprojevosoft.Navigator
 import com.testprojevosoft.R
-import com.testprojevosoft.activities.AuthorizationActivity
+import com.testprojevosoft.activities.AuthorizationMainActivity
 import com.testprojevosoft.anim.ShakeError
 import com.testprojevosoft.databinding.FragmentVerificationBinding
 import com.testprojevosoft.viewModels.VerificationViewModel
@@ -32,7 +32,8 @@ class VerificationFragment : Fragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        mPhoneNumber = arguments?.getString(AuthorizationActivity.PHONE_NUMBER_KEY) as String
+        // get phone number from arguments bundle
+        mPhoneNumber = arguments?.getString(AuthorizationMainActivity.PHONE_NUMBER_KEY) as String
     }
 
     override fun onCreateView(
@@ -46,11 +47,13 @@ class VerificationFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        // set observer to LiveData timer remaining value
         mVerificationViewModel.remainingSecondsLiveData.observe(viewLifecycleOwner,
             Observer { remainingSeconds ->
                 mBinding.tvTimer.text = getString(R.string.timerText, remainingSeconds.toString())
             })
 
+        // set observer to LiveData when timer elapsed
         mVerificationViewModel.isTimerElapsed.observe(viewLifecycleOwner,
             Observer { isTimerElapsed ->
                 if (isTimerElapsed) {
@@ -59,16 +62,21 @@ class VerificationFragment : Fragment() {
                 }
             })
 
+        // set onClickListener for retry button to retry requestValidation code
         mBinding.btnRetry.setOnClickListener {
             GlobalScope.launch(Dispatchers.IO) {
                 mVerificationViewModel.retryVerificationCode()
             }
+            // reset timer
             mVerificationViewModel.startTimer(60, 1f)
         }
 
+        // start timer when fragment view created
         mVerificationViewModel.startTimer(60, 1f)
+        // set formatted phone number to TextView
         val formattedPhoneNumber = formatPhoneNumber(mPhoneNumber)
         mBinding.tvPhoneNumber.text = formattedPhoneNumber
+        // setting up EditText's watchers
         setupCodeInputs()
     }
 
@@ -83,6 +91,7 @@ class VerificationFragment : Fragment() {
         return number
     }
 
+    // setting up EditText's watchers
     private fun setupCodeInputs() {
         mBinding.etInputCode1.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
@@ -136,10 +145,12 @@ class VerificationFragment : Fragment() {
 
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
                 if (s.toString().trim().isNotEmpty()) {
+                    // get input code
                     val inputCode: String =
                         "${mBinding.etInputCode1.text}${mBinding.etInputCode2.text}" +
                                 "${mBinding.etInputCode3.text}${mBinding.etInputCode4.text}"
 
+                    // start coroutine for validation sms-code and go to ImagesListActivity
                     GlobalScope.launch(Dispatchers.IO) {
                         val isValid =
                             withContext(Dispatchers.IO) {
@@ -150,6 +161,7 @@ class VerificationFragment : Fragment() {
                             (activity as Navigator).goToPicturesList()
                             requireActivity().finish()
                         } else {
+                            // if validation sms-code failed
                             mBinding.etInputCode1.requestFocus()
                             startShakeError(mBinding)
                         }
@@ -203,7 +215,7 @@ class VerificationFragment : Fragment() {
     companion object {
         fun newInstance(phoneNumber: String): VerificationFragment {
             val args = Bundle().apply {
-                putString(AuthorizationActivity.PHONE_NUMBER_KEY, phoneNumber)
+                putString(AuthorizationMainActivity.PHONE_NUMBER_KEY, phoneNumber)
             }
 
             return VerificationFragment().apply {

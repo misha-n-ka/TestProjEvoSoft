@@ -13,7 +13,6 @@ class ImageListViewModel : ViewModel() {
     private val mRepository = Repository.get()
 
     suspend fun getNextImages(numLoadImages: Int): List<String> {
-
         return mRepository.getNextImages(numLoadImages)
     }
 }

@@ -12,6 +12,7 @@ import com.testprojevosoft.R
 class ShakeError {
 
     companion object {
+        // shake animation builder for error action in validation
         fun shakeError(): TranslateAnimation {
             val shake = TranslateAnimation(0f, 10f, 0f, 0f)
             shake.duration = durationAnimation

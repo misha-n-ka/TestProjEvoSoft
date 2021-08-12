@@ -3,7 +3,7 @@
     <string name="authorization">Authorization</string>
     <string name="phone_number">Phone number</string>
     <string name="sms_code">SMS-code</string>
-    <string name="input_phone_number_description">You will get sms-code on this phone number</string>
+    <string name="input_phone_number_description">You will get sms-code to this phone number</string>
     <string name="btn_get_sms_code">Get sms-code</string>
     <string name="verification_title">Verification by sms-code </string>
     <string name="verification_description">Enter the code sent to</string>
@@ -11,7 +11,7 @@
     <string name="button_retry">Retry</string>
     <string name="button_verify">Verify</string>
     <string name="countyCode">+7</string>
-    <string name="timerText">There is no number in databaseю</string>
+    <string name="timerText">%1$s seconds remains</string>
     <string name="no_number_in_base">There is no number in database. Enter 9998887766</string>
     <string name="delete_image">Delete image</string>
     <string name="logout">Logout</string>

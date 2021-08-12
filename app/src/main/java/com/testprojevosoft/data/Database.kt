@@ -56,16 +56,20 @@ class Database {
 
         suspend fun getNextImages(numLoadItems: Int): List<String> {
             delay(2000L)
+            // start index for buffered list images
             val minRange = numLoadItems * requestCount
             requestCount++
+            // las index for buffered list image
             var maxRange = numLoadItems * requestCount
+            // lf buffered list of numLoadItems bigger than reminder of base image list size
             if (maxRange > images.size) {
-                Log.d("Database", "in IF")
                 maxRange = images.size
                 requestCount = 0
             }
+            //init empty buffered list
             val resultList = mutableListOf<String>()
 
+            // filling buffered list
             if (maxRange <= images.size) {
                 for (i in minRange until maxRange) {
                     resultList.add(images[i])

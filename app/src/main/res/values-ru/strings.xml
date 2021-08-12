@@ -8,7 +8,7 @@
     <string name="btn_get_sms_code">Запросить смс-код</string>
     <string name="verification_title">Верификация по смс-коду</string>
     <string name="verification_description">Введите полученный смс-код</string>
-    <string name="if_did_not_receive_code">Если вы не получили смс-код нажмите</string>
+    <string name="if_did_not_receive_code">Если вы не получили смс-код, нажмите</string>
     <string name="button_retry">Повтор</string>
     <string name="button_verify">Подтвердить</string>
     <string name="countyCode">+7</string>
