@@ -14,8 +14,10 @@ import androidx.fragment.app.viewModels
 import com.testprojevosoft.Navigator
 import com.testprojevosoft.R
 import com.testprojevosoft.databinding.FragmentEnterPhoneNumberBinding
+import com.testprojevosoft.utils.PhoneNumberFormatter
 import com.testprojevosoft.viewModels.PhoneNumberFragmentViewModel
 import kotlinx.coroutines.*
+import java.text.NumberFormat
 import kotlin.coroutines.coroutineContext
 
 private const val TAG = "NumberInputFragment"
@@ -24,7 +26,6 @@ class PhoneNumberInputFragment : Fragment(R.layout.fragment_enter_phone_number) 
 
     private lateinit var mBinding: FragmentEnterPhoneNumberBinding
     private lateinit var mPhoneNumber: String
-    private var isButtonEnabled: Boolean = false
     private val mPhoneNumberViewModel: PhoneNumberFragmentViewModel by viewModels()
 
     override fun onCreateView(
@@ -39,79 +40,76 @@ class PhoneNumberInputFragment : Fragment(R.layout.fragment_enter_phone_number) 
     override fun onStart() {
         super.onStart()
 
-        // disable request sms-code button if EditText is empty
-        if (mBinding.etPhoneNumber.text.isNullOrEmpty()) {
-            mBinding.btnGetSmsCode.isEnabled = false
-        }
-        updateButtonColor(isButtonEnabled)
+        // valid input phoneNumber
+        var isValidPhoneNumber = false
+
         // reset UI to default state
         resetUI()
 
-        // implement watcher for EditText
-        val phoneNumberWatcher = object : TextWatcher {
+        // init text changed listener to EditText
+        mBinding.etPhoneNumber.addTextChangedListener(object :  TextWatcher {
+            val pattern = "(###)###-##-##"
+            var editTextText = ""
+
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
                 Log.d(TAG, "beforeTextChanged not realised")
             }
 
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                mBinding.btnGetSmsCode.isEnabled = !s.isNullOrEmpty()
-                // regex valid phone number
-                val validPhoneNumber: String? =
-                    Regex("^[+]?[0-9]{10}$").find(s.toString().trim())?.value
-                // if input phone number is not valid
-                if (validPhoneNumber == null) {
-                    isButtonEnabled = false
-                    updateButtonColor(isButtonEnabled)
-                    mBinding.etPhoneNumber.error = "Enter valid phone number"
-                } else {
-                    //phone number is valid
-                    isButtonEnabled = true
-                    updateButtonColor(isButtonEnabled)
-                    mPhoneNumber = "+7$validPhoneNumber"
+                if (!s.toString().equals(mBinding.etPhoneNumber.text)) {
+                    mBinding.etPhoneNumber.removeTextChangedListener(this)
+
+                    val formattedNumber = PhoneNumberFormatter.format(s.toString(), pattern)
+                    val isNumberInputted =
+                        formattedNumber.replaceFirst("(", "").isNotEmpty()
+
+                    if (isNumberInputted) {
+                        editTextText = formattedNumber
+                        isValidPhoneNumber = true
+                    } else {
+                        isValidPhoneNumber = false
+                    }
+                    mBinding.etPhoneNumber.setText(editTextText)
+                    mBinding.etPhoneNumber.setSelection(editTextText.length)
+                    mBinding.etPhoneNumber.addTextChangedListener(this)
                 }
             }
 
             override fun afterTextChanged(s: Editable?) {
                 Log.d(TAG, "afterTextChanged not realised")
             }
-        }
-
-        // init text changed listener to EditText
-        mBinding.etPhoneNumber.apply {
-            addTextChangedListener(phoneNumberWatcher)
-        }
+        })
 
         // set onClickListener for request cmc-code button
-        mBinding.btnGetSmsCode.setOnClickListener {
-            if (mBinding.etPhoneNumber.error == null) {
-                // start progress bar if EditText has no error
-                it.visibility = View.INVISIBLE
-                mBinding.progressBar.visibility = View.VISIBLE
-            }
-            // check if phone number is in database
-            if (mPhoneNumberViewModel.isNumberInBase(mPhoneNumber)) {
-                //launching coroutine for request verification code and
-                // then start verification activity
-                GlobalScope.launch(Dispatchers.Main) {
-                    mPhoneNumberViewModel.requestVerificationCode()
-                    (activity as Navigator).goToSmsVerification(mPhoneNumber)
+        mBinding.btnGetSmsCode.setOnClickListener { button ->
+            when (isValidPhoneNumber) {
+                false -> {
+                    mBinding.etPhoneNumber.error = "Enter valid phone number"
                 }
-            } else {
-                // if phone number is not in database
-                resetUI()
-                Toast.makeText(context, R.string.no_number_in_base, Toast.LENGTH_SHORT)
-                    .show()
-            }
-        }
-    }
+                true -> {
+                    // start progress bar if phone number is valid
+                    button.visibility = View.INVISIBLE
+                    mBinding.progressBar.visibility = View.VISIBLE
 
-    // change button color depends on it's enabled state
-    private fun updateButtonColor(isEnabled: Boolean) {
-        when(isEnabled) {
-            true -> mBinding.btnGetSmsCode.backgroundTintList =
-                ContextCompat.getColorStateList(requireContext(), R.color.purple_500)
-            false -> mBinding.btnGetSmsCode.backgroundTintList =
-                ContextCompat.getColorStateList(requireContext(), R.color.gray)
+                    mPhoneNumber = "+7" +
+                            mBinding.etPhoneNumber.text?.filter { it.isDigit() }.toString()
+                    // check if phone number is in database
+                    if (mPhoneNumberViewModel.isNumberInBase(mPhoneNumber)) {
+                        //launching coroutine for request verification code and
+                        // then start verification activity
+                        GlobalScope.launch(Dispatchers.Main) {
+                            mPhoneNumberViewModel.requestVerificationCode()
+                            (activity as Navigator)
+                                .goToSmsVerification("+7" + mBinding.etPhoneNumber.text.toString())
+                        }
+                    } else {
+                        // if phone number is not in database
+                        resetUI()
+                        Toast.makeText(context, R.string.no_number_in_base, Toast.LENGTH_SHORT)
+                            .show()
+                    }
+                }
+            }
         }
     }
 

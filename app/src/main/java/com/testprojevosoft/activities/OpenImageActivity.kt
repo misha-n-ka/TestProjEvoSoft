@@ -9,16 +9,15 @@ import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import com.bumptech.glide.Glide
 import com.testprojevosoft.R
+import com.testprojevosoft.Repository
 import com.testprojevosoft.databinding.ActivityOpenPictureBinding
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.*
 
 class OpenImageActivity : AppCompatActivity() {
 
     private lateinit var mBinding: ActivityOpenPictureBinding
     private var imageUrl: String? = ""
+    private val mRepository = Repository.get()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -33,10 +32,19 @@ class OpenImageActivity : AppCompatActivity() {
     override fun onStart() {
         super.onStart()
 
-        // loading image from url into imageview
-        Glide.with(this)
-            .load(imageUrl)
-            .into(mBinding.image)
+        mBinding.image.visibility = View.INVISIBLE
+        mBinding.progressBar.visibility = View.VISIBLE
+
+        GlobalScope.launch(Dispatchers.Main) {
+            withContext(Dispatchers.IO) { mRepository.getImage() }
+            // loading image from url into imageview
+            Glide.with(this@OpenImageActivity)
+                .load(imageUrl)
+                .into(mBinding.image)
+
+            mBinding.image.visibility = View.VISIBLE
+            mBinding.progressBar.visibility = View.INVISIBLE
+        }
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {

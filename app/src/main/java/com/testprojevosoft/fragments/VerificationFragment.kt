@@ -151,7 +151,7 @@ class VerificationFragment : Fragment() {
                                 "${mBinding.etInputCode3.text}${mBinding.etInputCode4.text}"
 
                     // start coroutine for validation sms-code and go to ImagesListActivity
-                    GlobalScope.launch(Dispatchers.IO) {
+                    GlobalScope.launch(Dispatchers.Main) {
                         val isValid =
                             withContext(Dispatchers.IO) {
                                 mVerificationViewModel.isValidCode(inputCode)

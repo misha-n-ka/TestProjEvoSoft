@@ -23,6 +23,10 @@ class Repository {
         return Database.getNextImages(numLoadImages)
     }
 
+    suspend fun getImage() {
+        delay(2000L)
+    }
+
     companion object {
         private var INSTANCE: Repository? = null
 
