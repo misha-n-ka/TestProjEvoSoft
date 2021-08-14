@@ -160,7 +160,7 @@ class VerificationFragment : Fragment() {
                                 mVerificationViewModel.isValidCode(inputCode)
                             }
                         if (isValid) {
-                            (activity as Authorizable).login(true)
+                            (activity as Authorizable).setAuthorizationState(true)
                             (activity as Navigator).goToPicturesList()
                             requireActivity().finish()
                         } else {
