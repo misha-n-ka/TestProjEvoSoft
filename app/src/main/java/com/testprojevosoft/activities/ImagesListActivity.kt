@@ -9,6 +9,7 @@ import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.testprojevosoft.R
 import com.testprojevosoft.databinding.ActivityPicturesListBinding
@@ -16,13 +17,12 @@ import com.testprojevosoft.utils.ImageAdapter
 import com.testprojevosoft.utils.InfiniteScrollListener
 import com.testprojevosoft.viewModels.ImageListViewModel
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 
 class ImagesListActivity : AppCompatActivity(),
     InfiniteScrollListener.OnLoadMoreListener,
-    ImageAdapter.OpenImageNavigator {
+    ImageAdapter.OpenImageCallbacks {
 
     private lateinit var mBinding: ActivityPicturesListBinding
     private lateinit var mInfiniteScrollListener: InfiniteScrollListener
@@ -60,11 +60,11 @@ class ImagesListActivity : AppCompatActivity(),
                     deleteImage(result.data?.getStringExtra(EXTRA_DELETE_IMAGE)!!)
                 }
             }
-
     }
 
     override fun onStart() {
         super.onStart()
+        // loading first 10 images
         onLoadMore(10)
     }
 
@@ -88,7 +88,7 @@ class ImagesListActivity : AppCompatActivity(),
 
     override fun onLoadMore(numLoadItems: Int) {
         // launch coroutine for loading new images in pictures list
-        GlobalScope.launch(Dispatchers.Main) {
+        lifecycleScope.launch(Dispatchers.Main) {
             // set null data for starting loading
             imageAdapter.addNullData()
             //launch async coroutine

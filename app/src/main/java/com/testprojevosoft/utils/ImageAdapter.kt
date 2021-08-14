@@ -14,7 +14,7 @@ private  const val VIEW_TYPE_PROGRESS = 2
 class ImageAdapter(private var images: MutableList<String?>) :
     RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
-    interface OpenImageNavigator {
+    interface OpenImageCallbacks {
         fun goToOpenImage(imageUrl: String?)
         fun deleteImage(image: String)
     }
@@ -55,7 +55,7 @@ class ImageAdapter(private var images: MutableList<String?>) :
 
         init {
             itemView.setOnClickListener {
-                (itemView.context as OpenImageNavigator)
+                (itemView.context as OpenImageCallbacks)
                     .goToOpenImage(images[absoluteAdapterPosition])
             }
         }

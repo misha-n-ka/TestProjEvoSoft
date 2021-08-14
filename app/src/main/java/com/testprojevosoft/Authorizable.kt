@@ -1,5 +1,5 @@
 package com.testprojevosoft
 
 interface Authorizable {
-    fun login(isAuthorized: Boolean)
+    fun setAuthorizationState(authorizationState: Boolean)
 }

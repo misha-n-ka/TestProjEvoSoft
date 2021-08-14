@@ -5,12 +5,13 @@ import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import com.testprojevosoft.Authorizable
 import com.testprojevosoft.Navigator
+import com.testprojevosoft.R
 import com.testprojevosoft.data.User
 import com.testprojevosoft.databinding.ActivityMainBinding
 import com.testprojevosoft.fragments.PhoneNumberInputFragment
 import com.testprojevosoft.fragments.VerificationFragment
 
-class AuthorizationMainActivity : AppCompatActivity(), Navigator, Authorizable {
+class AuthorizationMainActivity : AppCompatActivity(R.layout.activity_main), Navigator, Authorizable {
 
     private lateinit var binding: ActivityMainBinding
     lateinit var user: User
@@ -70,8 +71,8 @@ class AuthorizationMainActivity : AppCompatActivity(), Navigator, Authorizable {
     }
 
     // set logged in user field
-    override fun login(isAuthorized: Boolean) {
-        user.isAuthorized = isAuthorized
+    override fun setAuthorizationState(authorizationState: Boolean) {
+        user.isAuthorized = authorizationState
     }
 
     companion object {

@@ -7,6 +7,7 @@ import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.lifecycleScope
 import com.bumptech.glide.Glide
 import com.testprojevosoft.R
 import com.testprojevosoft.Repository
@@ -26,7 +27,7 @@ class OpenImageActivity : AppCompatActivity() {
             .also { setContentView(it.root) }
 
         // get image url from intent
-        intent.getStringExtra(ImagesListActivity.EXTRA_OPEN_IMAGE).also { imageUrl = it }
+        imageUrl = intent.getStringExtra(ImagesListActivity.EXTRA_OPEN_IMAGE)
     }
 
     override fun onStart() {
@@ -35,7 +36,7 @@ class OpenImageActivity : AppCompatActivity() {
         mBinding.image.visibility = View.INVISIBLE
         mBinding.progressBar.visibility = View.VISIBLE
 
-        GlobalScope.launch(Dispatchers.Main) {
+        lifecycleScope.launch(Dispatchers.Main) {
             withContext(Dispatchers.IO) { mRepository.getImage() }
             // loading image from url into imageview
             Glide.with(this@OpenImageActivity)
@@ -67,7 +68,7 @@ class OpenImageActivity : AppCompatActivity() {
                 // appear progress bar
                 mBinding.progressBar.visibility = View.VISIBLE
                 //launching coroutine for deleting request
-                GlobalScope.launch(Dispatchers.Main) {
+                lifecycleScope.launch(Dispatchers.Main) {
                     launch { delay(2000L) }.join()
                     onBackPressed()
                 }

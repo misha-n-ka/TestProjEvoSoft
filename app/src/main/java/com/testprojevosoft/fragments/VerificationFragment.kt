@@ -12,6 +12,7 @@ import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
+import androidx.lifecycle.lifecycleScope
 import com.testprojevosoft.Authorizable
 import com.testprojevosoft.Navigator
 import com.testprojevosoft.R
@@ -19,7 +20,9 @@ import com.testprojevosoft.activities.AuthorizationMainActivity
 import com.testprojevosoft.anim.ShakeError
 import com.testprojevosoft.databinding.FragmentVerificationBinding
 import com.testprojevosoft.viewModels.VerificationViewModel
-import kotlinx.coroutines.*
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 
 private const val TAG = "Verification"
@@ -64,7 +67,7 @@ class VerificationFragment : Fragment() {
 
         // set onClickListener for retry button to retry requestValidation code
         mBinding.btnRetry.setOnClickListener {
-            GlobalScope.launch(Dispatchers.IO) {
+            lifecycleScope.launch(Dispatchers.IO) {
                 mVerificationViewModel.retryVerificationCode()
             }
             // reset timer
@@ -151,7 +154,7 @@ class VerificationFragment : Fragment() {
                                 "${mBinding.etInputCode3.text}${mBinding.etInputCode4.text}"
 
                     // start coroutine for validation sms-code and go to ImagesListActivity
-                    GlobalScope.launch(Dispatchers.Main) {
+                    lifecycleScope.launch(Dispatchers.Main) {
                         val isValid =
                             withContext(Dispatchers.IO) {
                                 mVerificationViewModel.isValidCode(inputCode)

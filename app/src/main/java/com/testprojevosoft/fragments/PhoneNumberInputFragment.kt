@@ -11,6 +11,7 @@ import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.lifecycleScope
 import com.testprojevosoft.Navigator
 import com.testprojevosoft.R
 import com.testprojevosoft.databinding.FragmentEnterPhoneNumberBinding
@@ -97,7 +98,7 @@ class PhoneNumberInputFragment : Fragment(R.layout.fragment_enter_phone_number) 
                     if (mPhoneNumberViewModel.isNumberInBase(mPhoneNumber)) {
                         //launching coroutine for request verification code and
                         // then start verification activity
-                        GlobalScope.launch(Dispatchers.Main) {
+                        lifecycleScope.launch(Dispatchers.Main) {
                             mPhoneNumberViewModel.requestVerificationCode()
                             (activity as Navigator)
                                 .goToSmsVerification("+7" + mBinding.etPhoneNumber.text.toString())
