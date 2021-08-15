@@ -50,8 +50,14 @@ class Database {
             "https://pixabay.com/get/g05cf818fdc1ae3f868903b168718e745f8cf9e2a413164566f222ba6e7d2942f843ed0f5128bc17e6e9529f61f2e145c_1280.jpg",
         )
 
-        suspend fun requestVerificationCode() {
+        suspend fun requestVerificationCode(number: String): Boolean {
             delay(2000L)
+            return isNumberInBase(number)
+        }
+
+        // check if number is in database
+        fun isNumberInBase(number: String): Boolean {
+            return phoneNumbers.firstOrNull { it == number } != null
         }
 
         suspend fun getNextImages(numLoadItems: Int): List<String> {

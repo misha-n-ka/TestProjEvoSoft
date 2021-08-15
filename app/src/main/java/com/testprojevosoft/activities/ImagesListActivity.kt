@@ -3,15 +3,18 @@ package com.testprojevosoft.activities
 import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
+import android.provider.Settings
 import android.view.Menu
 import android.view.MenuItem
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.datastore.core.DataStore
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.testprojevosoft.R
+import com.testprojevosoft.SettingsManager
 import com.testprojevosoft.databinding.ActivityPicturesListBinding
 import com.testprojevosoft.utils.ImageAdapter
 import com.testprojevosoft.utils.InfiniteScrollListener
@@ -19,6 +22,7 @@ import com.testprojevosoft.viewModels.ImageListViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
+import java.util.prefs.Preferences
 
 class ImagesListActivity : AppCompatActivity(),
     InfiniteScrollListener.OnLoadMoreListener,
@@ -78,7 +82,12 @@ class ImagesListActivity : AppCompatActivity(),
         return when (item.itemId) {
             // if clicked on logout menu button
             R.id.logOut -> {
-                startActivity(Intent(applicationContext, AuthorizationMainActivity::class.java))
+                // set intent with flag "user logged out"
+                val intent =
+                    Intent(applicationContext, AuthorizationMainActivity::class.java).apply {
+                        putExtra(AuthorizationMainActivity.IS_USER_LOGGED_OUT, true)
+                    }
+                startActivity(intent)
                 finish()
                 true
             }

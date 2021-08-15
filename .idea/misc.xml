@@ -5,14 +5,13 @@
       <map>
         <entry key="..\:/AndroidProjects/TestProjEvoSoft/app/src/main/res/drawable/ic_baseline_navigate_next_24.xml" value="0.37552083333333336" />
         <entry key="..\:/AndroidProjects/TestProjEvoSoft/app/src/main/res/layout/activity_main.xml" value="0.33" />
-        <entry key="..\:/AndroidProjects/TestProjEvoSoft/app/src/main/res/layout/activity_open_picture.xml" value="0.359375" />
         <entry key="..\:/AndroidProjects/TestProjEvoSoft/app/src/main/res/layout/fragment_enter_phone_number.xml" value="0.33" />
         <entry key="..\:/AndroidProjects/TestProjEvoSoft/app/src/main/res/layout/fragment_sms_verification.xml" value="0.359375" />
         <entry key="..\:/AndroidProjects/TestProjEvoSoft/app/src/main/res/layout/fragment_verification.xml" value="0.5" />
         <entry key="..\:/MishaProj/TestProjEvoSoft/app/src/main/res/layout/activity_open_picture.xml" value="0.36666666666666664" />
         <entry key="..\:/MishaProj/TestProjEvoSoft/app/src/main/res/layout/activity_pictures_list.xml" value="0.36102564102564105" />
         <entry key="..\:/MishaProj/TestProjEvoSoft/app/src/main/res/layout/fragment_enter_phone_number.xml" value="0.36666666666666664" />
-        <entry key="..\:/MishaProj/TestProjEvoSoft/app/src/main/res/layout/fragment_verification.xml" value="0.5" />
+        <entry key="..\:/MishaProj/TestProjEvoSoft/app/src/main/res/layout/fragment_verification.xml" value="0.36666666666666664" />
         <entry key="..\:/MishaProj/TestProjEvoSoft/app/src/main/res/layout/image_item.xml" value="0.36666666666666664" />
         <entry key="..\:/MishaProj/TestProjEvoSoft/app/src/main/res/layout/picture_item.xml" value="0.2814814814814815" />
         <entry key="..\:/MishaProj/TestProjEvoSoft/app/src/main/res/layout/progress_bar_item.xml" value="0.2814814814814815" />

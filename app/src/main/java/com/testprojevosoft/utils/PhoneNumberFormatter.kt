@@ -10,21 +10,18 @@ class PhoneNumberFormatter {
         * pattern = (###)###-##-##
         * result = (000)000-00-00*/
         fun format(input: String, pattern: String): String {
-            val filteredInput = input.filter { it.isDigit() }
-            val inputMutList = filteredInput.split("")
-                .subList(1, input.length + 1)
-                .toMutableList()
-            val resultList = mutableListOf<String>()
-            for (i in pattern.indices) {
-                if (pattern[i] == '#') {
-                    if (inputMutList.isEmpty()) continue
-                    val currentDigit = inputMutList.removeAt(0)
-                    resultList.add(currentDigit)
+            val filteredInput = input.filter { it.isDigit() }.toMutableList()
+            val patternMutList = pattern.toMutableList()
+            val result = mutableListOf<String>()
+            while (filteredInput.isNotEmpty()) {
+                val patternCurrentChar = patternMutList.removeFirstOrNull() ?: "#"
+                if (patternCurrentChar.toString() == "#") {
+                    result.add(filteredInput.removeFirst().toString())
                 } else {
-                    resultList.add(pattern[i].toString())
+                    result.add(patternCurrentChar.toString())
                 }
             }
-            return resultList.joinToString("")
+            return result.joinToString("")
         }
     }
 }

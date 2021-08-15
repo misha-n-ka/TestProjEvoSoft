@@ -15,8 +15,8 @@ class Repository {
         return Database.smsCodes
     }
 
-    suspend fun requestVerificationCode() {
-        return Database.requestVerificationCode()
+    suspend fun requestVerificationCode(number: String): Boolean {
+        return Database.requestVerificationCode(number)
     }
 
     suspend fun getNextImages(numLoadImages: Int) : List<String> {

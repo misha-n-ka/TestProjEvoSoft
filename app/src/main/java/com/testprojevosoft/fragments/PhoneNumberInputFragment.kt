@@ -2,6 +2,7 @@ package com.testprojevosoft.fragments
 
 import android.os.Bundle
 import android.text.Editable
+import android.text.TextUtils
 import android.text.TextWatcher
 import android.util.Log
 import android.view.LayoutInflater
@@ -41,9 +42,6 @@ class PhoneNumberInputFragment : Fragment(R.layout.fragment_enter_phone_number) 
     override fun onStart() {
         super.onStart()
 
-        // valid input phoneNumber
-        var isValidPhoneNumber = false
-
         // reset UI to default state
         resetUI()
 
@@ -57,18 +55,16 @@ class PhoneNumberInputFragment : Fragment(R.layout.fragment_enter_phone_number) 
             }
 
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                mBinding.inlayPhoneNumber.error = null
                 if (!s.toString().equals(mBinding.etPhoneNumber.text)) {
                     mBinding.etPhoneNumber.removeTextChangedListener(this)
 
                     val formattedNumber = PhoneNumberFormatter.format(s.toString(), pattern)
-                    val isNumberInputted =
-                        formattedNumber.replaceFirst("(", "").isNotEmpty()
 
-                    if (isNumberInputted) {
-                        editTextText = formattedNumber
-                        isValidPhoneNumber = true
+                    if (isInputNumberEmpty()) {
+                        editTextText = ""
                     } else {
-                        isValidPhoneNumber = false
+                        editTextText = formattedNumber
                     }
                     mBinding.etPhoneNumber.setText(editTextText)
                     mBinding.etPhoneNumber.setSelection(editTextText.length)
@@ -83,31 +79,32 @@ class PhoneNumberInputFragment : Fragment(R.layout.fragment_enter_phone_number) 
 
         // set onClickListener for request cmc-code button
         mBinding.btnGetSmsCode.setOnClickListener { button ->
-            when (isValidPhoneNumber) {
-                false -> {
-                    mBinding.etPhoneNumber.error = "Enter valid phone number"
-                }
+            when (isInputNumberValid()) {
                 true -> {
+                    mBinding.inlayPhoneNumber.error = getString(R.string.error_edit_text)
+                }
+                false -> {
                     // start progress bar if phone number is valid
                     button.visibility = View.INVISIBLE
                     mBinding.progressBar.visibility = View.VISIBLE
 
                     mPhoneNumber = "+7" +
                             mBinding.etPhoneNumber.text?.filter { it.isDigit() }.toString()
-                    // check if phone number is in database
-                    if (mPhoneNumberViewModel.isNumberInBase(mPhoneNumber)) {
-                        //launching coroutine for request verification code and
-                        // then start verification activity
-                        lifecycleScope.launch(Dispatchers.Main) {
-                            mPhoneNumberViewModel.requestVerificationCode()
+
+                    lifecycleScope.launch(Dispatchers.Main) {
+                        var success = false
+                        withContext(Dispatchers.IO) {
+                            success = mPhoneNumberViewModel.requestVerificationCode(mPhoneNumber)
+                        }
+                        if (success) {
                             (activity as Navigator)
                                 .goToSmsVerification("+7" + mBinding.etPhoneNumber.text.toString())
+                        } else {
+                            // if phone number is not in database
+                            resetUI()
+                            Toast.makeText(context, R.string.no_number_in_base, Toast.LENGTH_SHORT)
+                                .show()
                         }
-                    } else {
-                        // if phone number is not in database
-                        resetUI()
-                        Toast.makeText(context, R.string.no_number_in_base, Toast.LENGTH_SHORT)
-                            .show()
                     }
                 }
             }
@@ -118,6 +115,15 @@ class PhoneNumberInputFragment : Fragment(R.layout.fragment_enter_phone_number) 
     private fun resetUI() {
         mBinding.btnGetSmsCode.visibility = View.VISIBLE
         mBinding.progressBar.visibility = View.INVISIBLE
+    }
+
+    private fun isInputNumberEmpty(): Boolean {
+        return mBinding.etPhoneNumber.text.toString() == "(" ||
+                mBinding.etPhoneNumber.text.toString() == ""
+    }
+
+    private fun isInputNumberValid(): Boolean {
+        return mBinding.etPhoneNumber.text.toString().length != 14
     }
 
     companion object {

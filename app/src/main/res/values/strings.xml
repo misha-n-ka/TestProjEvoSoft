@@ -15,4 +15,5 @@
     <string name="no_number_in_base">There is no number in database. Enter 9998887766</string>
     <string name="delete_image">Delete image</string>
     <string name="logout">Logout</string>
+    <string name="error_edit_text">Enter valid phone number</string>
 </resources>

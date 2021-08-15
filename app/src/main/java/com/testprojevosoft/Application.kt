@@ -7,5 +7,4 @@ class TestApplication: Application() {
         super.onCreate()
         Repository.initialize()
     }
-
 }

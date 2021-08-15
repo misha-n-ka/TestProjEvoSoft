@@ -31,8 +31,8 @@ class VerificationViewModel : ViewModel() {
         return codes.firstOrNull { it == code } != null
     }
 
-    suspend fun retryVerificationCode() {
-        mRepository.requestVerificationCode()
+    suspend fun retryVerificationCode(number: String): Boolean {
+        return mRepository.requestVerificationCode(number)
 
     }
 

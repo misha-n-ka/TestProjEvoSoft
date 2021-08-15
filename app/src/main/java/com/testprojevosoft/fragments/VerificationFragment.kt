@@ -13,7 +13,6 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
-import com.testprojevosoft.Authorizable
 import com.testprojevosoft.Navigator
 import com.testprojevosoft.R
 import com.testprojevosoft.activities.AuthorizationMainActivity
@@ -23,9 +22,6 @@ import com.testprojevosoft.viewModels.VerificationViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-
-
-private const val TAG = "Verification"
 
 class VerificationFragment : Fragment() {
 
@@ -68,7 +64,7 @@ class VerificationFragment : Fragment() {
         // set onClickListener for retry button to retry requestValidation code
         mBinding.btnRetry.setOnClickListener {
             lifecycleScope.launch(Dispatchers.IO) {
-                mVerificationViewModel.retryVerificationCode()
+                mVerificationViewModel.retryVerificationCode(mPhoneNumber)
             }
             // reset timer
             mVerificationViewModel.startTimer(60, 1f)
@@ -160,7 +156,9 @@ class VerificationFragment : Fragment() {
                                 mVerificationViewModel.isValidCode(inputCode)
                             }
                         if (isValid) {
-                            (activity as Authorizable).setAuthorizationState(true)
+                            // save user authorization state
+                            (activity as AuthorizationMainActivity)
+                                .settingsManager.saveAuthorizationState(true)
                             (activity as Navigator).goToPicturesList()
                             requireActivity().finish()
                         } else {

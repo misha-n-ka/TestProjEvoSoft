@@ -16,4 +16,5 @@
     <string name="no_number_in_base">Такого номера нет. Введите 9998887766</string>
     <string name="delete_image">Удалить</string>
     <string name="logout">Выйти</string>
+    <string name="error_edit_text">Введите верный номер телефона</string>
 </resources>

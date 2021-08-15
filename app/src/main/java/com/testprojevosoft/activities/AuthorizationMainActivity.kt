@@ -3,33 +3,48 @@ package com.testprojevosoft.activities
 import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
-import com.testprojevosoft.Authorizable
+import androidx.lifecycle.lifecycleScope
 import com.testprojevosoft.Navigator
 import com.testprojevosoft.R
+import com.testprojevosoft.SettingsManager
 import com.testprojevosoft.data.User
 import com.testprojevosoft.databinding.ActivityMainBinding
 import com.testprojevosoft.fragments.PhoneNumberInputFragment
 import com.testprojevosoft.fragments.VerificationFragment
+import kotlinx.coroutines.*
 
-class AuthorizationMainActivity : AppCompatActivity(R.layout.activity_main), Navigator, Authorizable {
+class AuthorizationMainActivity : AppCompatActivity(R.layout.activity_main), Navigator {
 
     private lateinit var binding: ActivityMainBinding
     lateinit var user: User
+    val settingsManager = SettingsManager(this)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        binding = ActivityMainBinding.inflate(layoutInflater)
-            .also { setContentView(it.root) }
-
         // init user
         user = User()
-        // get authorization info from saved state
-        user.isAuthorized = savedInstanceState?.getBoolean(SAVED_STATE_IS_AUTHORIZED) ?: false
+        // get flag "if user pressed log out button in images list activity"
+        val isUserLoggedOut = intent.getBooleanExtra(IS_USER_LOGGED_OUT, false)
+
+        runBlocking {
+            if(isUserLoggedOut) {
+                // if user logged out, save this state to DataStore (settingsManager)
+                settingsManager.saveAuthorizationState(false)
+            } else {
+                // if user didn't log out, get authorization state from DatsStore(settingsManager)
+                // and set to user.isAuthorized
+                user.isAuthorized = settingsManager.readAuthorizationState()
+            }
+        }
+
         // go to pictures list if user is logged in
         if (user.isAuthorized) {
             goToPicturesList()
         }
+
+        binding = ActivityMainBinding.inflate(layoutInflater)
+            .also { setContentView(it.root) }
 
         val currentFragment =
             supportFragmentManager.findFragmentById(binding.fragmentContainer.id)
@@ -38,11 +53,6 @@ class AuthorizationMainActivity : AppCompatActivity(R.layout.activity_main), Nav
         if (currentFragment == null) {
             goToPhoneNumberInput()
         }
-    }
-
-    override fun onSaveInstanceState(outState: Bundle) {
-        super.onSaveInstanceState(outState)
-        outState.putBoolean(SAVED_STATE_IS_AUTHORIZED, user.isAuthorized)
     }
 
     // launching phone number input fragment
@@ -70,13 +80,8 @@ class AuthorizationMainActivity : AppCompatActivity(R.layout.activity_main), Nav
         startActivity(intent)
     }
 
-    // set logged in user field
-    override fun setAuthorizationState(authorizationState: Boolean) {
-        user.isAuthorized = authorizationState
-    }
-
     companion object {
         const val PHONE_NUMBER_KEY = "phoneNumber"
-        const val SAVED_STATE_IS_AUTHORIZED = "isAuthorized"
+        const val IS_USER_LOGGED_OUT = "isUserLoggedOut"
     }
 }

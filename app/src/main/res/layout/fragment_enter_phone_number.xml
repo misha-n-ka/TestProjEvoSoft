@@ -64,6 +64,7 @@
                     android:backgroundTint="@android:color/transparent"
                     android:hint="@string/phone_number"
                     android:inputType="phone"
+                    android:maxLength="14"
                     android:textSize="24sp"/>
             </com.google.android.material.textfield.TextInputLayout>
 
@@ -86,8 +87,7 @@
                 android:layout_marginTop="16dp"
                 android:text="@string/btn_get_sms_code"
                 android:textAllCaps="false"
-                android:enabled="false"
-                android:backgroundTint="@color/gray"
+                android:enabled="true"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.5"
                 app:layout_constraintStart_toStartOf="parent"
