@@ -15,12 +15,14 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
 import com.testprojevosoft.Navigator
 import com.testprojevosoft.R
+import com.testprojevosoft.TestApplication
 import com.testprojevosoft.activities.AuthorizationMainActivity
 import com.testprojevosoft.anim.ShakeError
 import com.testprojevosoft.databinding.FragmentVerificationBinding
 import com.testprojevosoft.viewModels.VerificationViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
 
 class VerificationFragment : Fragment() {
@@ -157,7 +159,7 @@ class VerificationFragment : Fragment() {
                             }
                         if (isValid) {
                             // save user authorization state
-                            (activity as AuthorizationMainActivity)
+                            TestApplication.getApplicationInstance()
                                 .settingsManager.saveAuthorizationState(true)
                             (activity as Navigator).goToPicturesList()
                             requireActivity().finish()

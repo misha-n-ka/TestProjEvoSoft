@@ -3,25 +3,23 @@ package com.testprojevosoft.activities
 import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
-import androidx.lifecycle.lifecycleScope
 import com.testprojevosoft.Navigator
 import com.testprojevosoft.R
-import com.testprojevosoft.SettingsManager
+import com.testprojevosoft.TestApplication
 import com.testprojevosoft.data.User
 import com.testprojevosoft.databinding.ActivityMainBinding
 import com.testprojevosoft.fragments.PhoneNumberInputFragment
 import com.testprojevosoft.fragments.VerificationFragment
-import kotlinx.coroutines.*
+import kotlinx.coroutines.runBlocking
 
 class AuthorizationMainActivity : AppCompatActivity(R.layout.activity_main), Navigator {
 
     private lateinit var binding: ActivityMainBinding
     lateinit var user: User
-    val settingsManager = SettingsManager(this)
+    private val settingsManager = TestApplication.getApplicationInstance().settingsManager
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
         // init user
         user = User()
         // get flag "if user pressed log out button in images list activity"
